@@ -184,18 +184,17 @@ library(RColorBrewer)
 library(dplyr)
 milkproduct <- milk_products_facts %>%
   select(year,frozen_ice_cream_regular,frozen_ice_cream_reduced_fat) %>%
-# modify ice cream value
-  rename(.,"regular ice cream"=frozen_ice_cream_regular,
-         "reduced fat ice cream"=frozen_ice_cream_reduced_fat) %>%
-# turn the wide data to longer
-  pivot_longer(.,cols=c(`regular ice cream`,`reduced fat ice cream`),names_to = "ice_cream_type",values_to = "Value") 
-  
+  mutate(total_icecream_con=frozen_ice_cream_regular+frozen_ice_cream_reduced_fat)
+
+# put the two variable into one data set
+milkprice <- select(milkcow_facts,avg_price_milk,year)
+figure_5 <- inner_join(milkprice, milkproduct, by = "year")
 # plot 
-ggplot(milkproduct,aes(x=year,y=Value,col= ice_cream_type)) +
-  geom_line() +  # draw line plot
-  labs(col="ice cream",x="time(year)",y="consumption  of ice cream(lbs)",title = "Consumption of different types of ice cream over time")+
+ggplot(figure_5,aes(x=avg_price_milk,y=total_icecream_con,col= year)) +
+  geom_point() +  # draw scatterpoint plot
+  labs(col="different year",x="average milk price",y="total consumption  of ice cream(lbs)",title = "Consumption of ice cream versus milk price")+
   scale_fill_brewer(palette = 'Set3')+
   theme(plot.title = element_text(hjust=0.5))
 ```
 
-Over these years, regular ice cream consumption is always higher than reduced fat ice cream consumption. However, the consumption of regular ice cream is decreasing over the time, while the consumption of reduced fat ice cream is fluctuating. Now, average regular frozen ice cream consumption in lbs per person is about 13lbs, while that of reduced fat ice cream is about 3 lbs.
+Over these years, total ice cream consumption keep decreasing as the average milk price grows higher. Although they seems don't have a linear relationship, average milk price increasing has some negative effect on ice cream consumption. After 2010, when average milk price reach 0.24 per pounds, total ice cream consumption reduced to the lowest on history.

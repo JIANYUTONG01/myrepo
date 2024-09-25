@@ -127,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>here() starts at C:/Users/HUAWEI/Desktop</code></pre>
+<pre><code>here() starts at G:/Data Science I folder/myrepo</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="do">## read in the data using here() function</span></span>
@@ -345,18 +345,17 @@ dbl (11): year, avg_milk_cow_number, milk_per_cow, milk_production_lbs, avg_...
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>milkproduct <span class="ot">&lt;-</span> milk_products_facts <span class="sc">%&gt;%</span></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year,frozen_ice_cream_regular,frozen_ice_cream_reduced_fat) <span class="sc">%&gt;%</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># modify ice cream value</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(.,<span class="st">"regular ice cream"</span><span class="ot">=</span>frozen_ice_cream_regular,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">"reduced fat ice cream"</span><span class="ot">=</span>frozen_ice_cream_reduced_fat) <span class="sc">%&gt;%</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># turn the wide data to longer</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(.,<span class="at">cols=</span><span class="fu">c</span>(<span class="st">`</span><span class="at">regular ice cream</span><span class="st">`</span>,<span class="st">`</span><span class="at">reduced fat ice cream</span><span class="st">`</span>),<span class="at">names_to =</span> <span class="st">"ice_cream_type"</span>,<span class="at">values_to =</span> <span class="st">"Value"</span>) </span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plot </span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(milkproduct,<span class="fu">aes</span>(<span class="at">x=</span>year,<span class="at">y=</span>Value,<span class="at">col=</span> ice_cream_type)) <span class="sc">+</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span>  <span class="co"># draw line plot</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">col=</span><span class="st">"ice cream"</span>,<span class="at">x=</span><span class="st">"time(year)"</span>,<span class="at">y=</span><span class="st">"consumption  of ice cream(lbs)"</span>,<span class="at">title =</span> <span class="st">"Consumption of different types of ice cream over time"</span>)<span class="sc">+</span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">'Set3'</span>)<span class="sc">+</span></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_icecream_con=</span>frozen_ice_cream_regular<span class="sc">+</span>frozen_ice_cream_reduced_fat)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># put the two variable into one data set</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>milkprice <span class="ot">&lt;-</span> <span class="fu">select</span>(milkcow_facts,avg_price_milk,year)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>figure_5 <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(milkprice, milkproduct, <span class="at">by =</span> <span class="st">"year"</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co"># plot </span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(figure_5,<span class="fu">aes</span>(<span class="at">x=</span>avg_price_milk,<span class="at">y=</span>total_icecream_con,<span class="at">col=</span> year)) <span class="sc">+</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>  <span class="co"># draw scatterpoint plot</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">col=</span><span class="st">"different year"</span>,<span class="at">x=</span><span class="st">"average milk price"</span>,<span class="at">y=</span><span class="st">"total consumption  of ice cream(lbs)"</span>,<span class="at">title =</span> <span class="st">"Consumption of ice cream versus milk price"</span>)<span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">'Set3'</span>)<span class="sc">+</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -365,7 +364,7 @@ dbl (11): year, avg_milk_cow_number, milk_per_cow, milk_production_lbs, avg_...
 </div>
 </div>
 </div>
-<p>Over these years, regular ice cream consumption is always higher than reduced fat ice cream consumption. However, the consumption of regular ice cream is decreasing over the time, while the consumption of reduced fat ice cream is fluctuating. Now, average regular frozen ice cream consumption in lbs per person is about 13lbs, while that of reduced fat ice cream is about 3 lbs.</p>
+<p>Over these years, total ice cream consumption keep decreasing as the average milk price grows higher. Although they seems don’t have a linear relationship, average milk price increasing has some negative effect on ice cream consumption. After 2010, when average milk price reach 0.24 per pounds, total ice cream consumption reduced to the lowest on history.</p>
 </section>
 
 </main>
