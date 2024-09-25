@@ -51,14 +51,14 @@ milk_cows_m <- milkcow_facts$avg_milk_cow_number/1000000 # transfer to millions
 milkproduction_mlbs <- milkcow_facts$milk_production_lbs/1000000
 
 # scatterplot plot 
-ggplot(data = milkcow_facts,aes(x=milk_cows_m,y=milkproduction_mlbs,col=year)+
+ggplot(data = milkcow_facts,aes(x=milk_cows_m,y=milkproduction_mlbs,col=year))+
 geom_point()+ # create scatterplot
-  labs(x="the number of milk cows (in millions)",y="milk production (in millions of pounds)") + # add x,y label
+  labs(x="the number of milk cows (in millions)",y="milk production (in millions of pounds)",col="YEAR") + # add x,y label
   ggtitle("Average milk production per cow")+ # add title
 theme(plot.title = element_text(hjust = 0.5))  # center the title
 ```
 
-Overall, milk production per cow appears to decrease as the number of milk cows increases. This negative relationship indicates that larger herds may produce less milk per cow.
+Overall, milk production per cow appears to decrease as the number of milk cows increases. So although in 2010, the herds were smaller, they had larger milk production, while in 1980, the herds were larger but the milk production was less.
 
 ## **Figure 2**
 
