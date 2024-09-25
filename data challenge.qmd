@@ -1,0 +1,201 @@
+---
+title: "data challenge 1"
+author: "JIANYU TONG"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+TO BEGIN WITH
+
+```{r}
+## load in the required libraries 
+library(readr)
+library(tidyverse)
+library(here)
+library(dplyr)
+## read in the data using here() function
+state_milk_production <- read_csv(here("C:/Users/HUAWEI/Desktop/data/state_milk_production.csv"))
+clean_cheese <- read_csv(here("C:/Users/HUAWEI/Desktop/data/clean_cheese.csv"))
+fluid_milk_sales <- read_csv(here("C:/Users/HUAWEI/Desktop/data/fluid_milk_sales.csv"))
+milk_products_facts <- read_csv(here("C:/Users/HUAWEI/Desktop/data/milk_products_facts.csv"))
+milkcow_facts <- read_csv(here("C:/Users/HUAWEI/Desktop/data/milkcow_facts.csv"))
+
+## disable scientific notation
+options(scipen = 999)
+```
+
+## **Figure 1**
+
+Make a scatter plot showing the milk production in pounds versus the average number of milk cows using `milkcow_facts`. Write a caption for this plot.
+
+-   The x-axis will be the number of milk cows (in millions) and the y-axis will be milk production (in millions of pounds)
+
+-   Color the plot using a continuous variable of years
+
+-   Label the axes (do not use the variable name)
+
+-   Add a title for the plot
+
+-   Label the legend (do not use the variable name)
+
+You can add options to executable code like this
+
+```{r}
+milk_cows_m <- milkcow_facts$avg_milk_cow_number/1000000 # transfer to millions
+milkproduction_mlbs <- milkcow_facts$milk_production_lbs/1000000
+
+# scatterplot plot 
+ggplot(data = milkcow_facts,aes(x=milk_cows_m,y=milkproduction_mlbs,col=year)+
+geom_point()+ # create scatterplot
+  labs(x="the number of milk cows (in millions)",y="milk production (in millions of pounds)") + # add x,y label
+  ggtitle("Average milk production per cow")+ # add title
+theme(plot.title = element_text(hjust = 0.5))  # center the title
+```
+
+Overall, milk production per cow appears to decrease as the number of milk cows increases. This negative relationship indicates that larger herds may produce less milk per cow.
+
+## **Figure 2**
+
+Examine the milk total milk production in each region over time using `state_milk_production`. We will plot line plots for the milk production versus the year faceted by region. Write a caption for this plot.
+
+-   First, find the total production of milk each year by region (hint: use `summarise()` to find this)
+
+-   The x-axis will be time and the y-axis will be total milk produced (in millions of pounds) in the region that year
+
+-   Make line plots and color each line a different color
+
+-   Facet the plot by region
+
+-   Label the axes (do not use the variable name)
+
+-   Add a title for the plot
+
+-   Remove the legend from the plot
+
+```{r}
+summary <- state_milk_production %>% # pipe to create new data
+group_by(region,year) %>%
+summarise(milk_production=sum(milk_produced)/1000000)
+
+# plot 
+ggplot(summary, aes(x = year, y = milk_production, color = region)) +
+  geom_line() +  # draw line plot
+  facet_wrap(~ region) +  # wrap the plot
+  labs(title = "Total Milk Production Over Time by Region",
+    x = "Year",y = "Total Milk Produced (Millions of Pounds)") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(size=8),
+        plot.title = element_text(hjust=0.5),
+        panel.spacing = unit(1.5, "lines"))
+```
+
+This plot draw a set of line plot of relationship between milk produce per year by different region. Lake States, Mountain, Pacific and Southern Plains have increasing milk production through out these years, Pacific has the highest average increasing rate. The rest region have fluctuating milk production these years.
+
+## **Figure 3**
+
+Make a line plot showing the amount (in pounds) of each milk products sold over time using `fluid_milk_sales`. Write a caption for this plot.
+
+-   Do not include the category ‘Total Production’ in the plot
+
+-   The x-axis will be time and the y-axis will be pounds of product
+
+-   Each milk product will be a separate line on the plot
+
+-   A different color will be assigned for each milk product
+
+-   Make the plot on the log scale for better visualization
+
+-   Label the axes (do not use the variable name)
+
+-   Add a title for the plot
+
+-   Label the legend (do not use the variable name)
+
+```{r}
+library(lubridate)
+# drop Total Production in milk type
+figure_3 <- fluid_milk_sales %>%
+  filter(milk_type != "Total Production")
+
+# plot
+ggplot(figure_3,aes(x=year,y=pounds,col=milk_type,group=milk_type)) +
+  geom_line() +
+  coord_trans(y="log10") +
+  labs(x="Year",y="pounds for milk production",title="the amount of each milk products sold over time",col="MILK TYPE")
+  
+```
+
+At the beginning, whole milk has the largest production, Eggnog has the lowest production. Now, reduced fat milk and whole milk have the largest production, while Eggnog production remain the lowest. Production of flavored milk(not whole) is increasing these years, and production of buttermilk is descending.
+
+## **Figure 4**
+
+Make a stacked bar plot of the different type of cheeses consumed over time using a long format version of `clean_cheese` that you create. Write a caption for this plot.
+
+Data wrangling (hint: create a new dataframe called `clean_cheese_long`):
+
+-   Remove all of the total cheese variables (we do not want these in the plot)
+
+-   Change the `clean_cheese` data to long format using `pivot_longer()`
+
+-   Make sure all of the cheese categories are capitalized
+
+Plotting:
+
+-   The x-axis will be time and the y-axis will be pounds of cheese
+
+-   Color the stacked bar plot by the different types of cheese
+
+-   Label the axes (do not use the variable name)
+
+-   Add a title for the plot
+
+-   Change the color of the plot using a palette from RColorBrewer (note that not all palettes will have enough colors for the plot)
+
+```{r}
+library(RColorBrewer)
+clean_cheese_long <- clean_cheese %>%
+  select(-`Total American Chese`,-`Total Italian Cheese`,
+         -`Total Natural Cheese`,-`Total Processed Cheese Products`) %>%
+# turn the wide data to longer
+  pivot_longer(.,cols=c(Cheddar,`American Other`,Mozzarella, `Italian other`, Swiss, Brick, Muenster, `Cream and Neufchatel`,Blue, `Other Dairy Cheese`, `Processed Cheese`, `Foods and spreads`),names_to = "Cheese",values_to = "Value")
+
+# plot 
+ggplot(clean_cheese_long,aes(x=Year,y=Value,fill= Cheese)) +
+  geom_bar(stat="identity",position = "stack")+
+  labs(fill="cheese type",x="time(year)",y="consumption  of cheese(in pounds)",title = "Consumption of different types of cheese over time")+
+  scale_fill_brewer(palette = 'Set3') +
+  theme(plot.title = element_text(hjust=0.5))
+```
+
+We could see that the consumption of cheese is growing through out the years. Meanwhile, mozzarella and cheddar cheese have a comparably large portion in total cheese consumption, while swiss cheese and blue cheese have a comparably small portion.
+
+## **Figure 5**
+
+Time to be creative! Make an original figure using the data. Join two of the dataframes together and use variables from both sides of the join to make this figure. This figure should tell a story and be easy to understand (just as the figures above are!). Change the colors of this plot from the default ggplot2 colors. Write a caption for this plot.
+
+```{r}
+library(RColorBrewer)
+library(dplyr)
+milkproduct <- milk_products_facts %>%
+  select(year,frozen_ice_cream_regular,frozen_ice_cream_reduced_fat) %>%
+# modify ice cream value
+  rename(.,"regular ice cream"=frozen_ice_cream_regular,
+         "reduced fat ice cream"=frozen_ice_cream_reduced_fat) %>%
+# turn the wide data to longer
+  pivot_longer(.,cols=c(`regular ice cream`,`reduced fat ice cream`),names_to = "ice_cream_type",values_to = "Value") 
+  
+# plot 
+ggplot(milkproduct,aes(x=year,y=Value,col= ice_cream_type)) +
+  geom_line() +  # draw line plot
+  labs(col="ice cream",x="time(year)",y="consumption  of ice cream(lbs)",title = "Consumption of different types of ice cream over time")+
+  scale_fill_brewer(palette = 'Set3')+
+  theme(plot.title = element_text(hjust=0.5))
+```
+
+Over these years, regular ice cream consumption is always higher than reduced fat ice cream consumption. However, the consumption of regular ice cream is decreasing over the time, while the consumption of reduced fat ice cream is fluctuating.
