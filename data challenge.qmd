@@ -58,7 +58,7 @@ geom_point()+ # create scatterplot
 theme(plot.title = element_text(hjust = 0.5))  # center the title
 ```
 
-Overall, milk production per cow appears to decrease as the number of milk cows increases. So although in 2010, the herds were smaller, they had larger milk production, while in 1980, the herds were larger but the milk production was less.
+Overall, milk production per cow appears to decrease as the number of milk cows increases. So although in 2010, the herds were smaller, they had larger milk production. To compare, in 1980, the herds were larger but the milk production was less.
 
 ## **Figure 2**
 
@@ -131,7 +131,7 @@ ggplot(figure_3,aes(x=year,y=pounds,col=milk_type,group=milk_type)) +
   
 ```
 
-At the beginning, whole milk has the largest production, Eggnog has the lowest production. Now, reduced fat milk and whole milk have the largest production, while Eggnog production remain the lowest. Production of flavored milk(not whole) is increasing these years, and production of buttermilk is descending.
+At the beginning, whole milk has the largest production, Eggnog has the lowest production. Now(after 2010), reduced fat milk and whole milk have the largest production, while Eggnog production remain the lowest. Production of flavored milk(not whole) is increasing these years, and production of buttermilk is descending.
 
 ## **Figure 4**
 
@@ -198,4 +198,4 @@ ggplot(milkproduct,aes(x=year,y=Value,col= ice_cream_type)) +
   theme(plot.title = element_text(hjust=0.5))
 ```
 
-Over these years, regular ice cream consumption is always higher than reduced fat ice cream consumption. However, the consumption of regular ice cream is decreasing over the time, while the consumption of reduced fat ice cream is fluctuating.
+Over these years, regular ice cream consumption is always higher than reduced fat ice cream consumption. However, the consumption of regular ice cream is decreasing over the time, while the consumption of reduced fat ice cream is fluctuating. Now, average regular frozen ice cream consumption in lbs per person is about 13lbs, while that of reduced fat ice cream is about 3 lbs.
